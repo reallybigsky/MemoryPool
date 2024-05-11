@@ -21,6 +21,11 @@
 #include "MemoryPool.h"
 #include <iostream>
 
+namespace opus::stats {
+extern size_t total_allocations;
+extern size_t total_bytes_allocated;
+}
+
 AppShift::Memory::MemoryPool::MemoryPool(size_t block_size)
 {
 	// Add first block to memory pool
@@ -42,6 +47,8 @@ AppShift::Memory::MemoryPool::~MemoryPool() {
 
 void AppShift::Memory::MemoryPool::createMemoryBlock(size_t block_size)
 {
+    opus::stats::total_allocations++;
+    opus::stats::total_bytes_allocated += block_size;
 	// Create the block
 	SMemoryBlockHeader* block = reinterpret_cast<SMemoryBlockHeader*>(std::malloc(sizeof(SMemoryBlockHeader) + block_size));
 	if (block == NULL) throw EMemoryErrors::CANNOT_CREATE_BLOCK;
